@@ -96,10 +96,10 @@ footer small{color:var(--paper);text-shadow:0 1px 0 var(--shade)}
 .d{display:inline-block;width:.95em;height:1.25em;margin:0 3px;overflow:hidden;background:#fff;outline:2px solid var(--ink);font-size:1.8rem;line-height:1.25em;text-align:center}
 .d em{display:block;font-style:normal;transform:translateY(calc(var(--n) * -1.25em));animation:roll 1.8s cubic-bezier(.2,.8,.2,1)}
 @keyframes roll{from{transform:none}}
-.links{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
-.links a{padding:.3em .9em;background:var(--paper);color:var(--ink);text-decoration:none;box-shadow:2px 3px 0 var(--shade);transform:rotate(-2deg)}
-.links a:nth-child(even){transform:rotate(2deg)}
-.links a:hover{background:var(--coral);color:#fff}
+.links{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:22px}
+.links a{display:block;color:#fff;text-decoration:none;text-shadow:0 2px 0 var(--shade);opacity:.9;transition:transform .2s,opacity .2s}
+.links img{display:block;height:44px;width:auto;max-width:90px;object-fit:contain;filter:drop-shadow(0 3px 0 var(--shade))}
+.links a:hover{opacity:1;transform:translateY(-4px) rotate(-4deg)}
 #box{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:20px;background:#1c2250e6}
 #box[hidden]{display:none}
 #box figure{max-width:min(92vw,900px);padding:12px 12px 8px;cursor:default;transform:rotate(-.8deg);box-shadow:4px 8px 0 var(--shade)}
@@ -113,7 +113,7 @@ footer small{color:var(--paper);text-shadow:0 1px 0 var(--shade)}
 @media(max-width:640px){.brand{display:none}.top{justify-content:center}nav a,nav button{padding-left:.6em;padding-right:.6em;font-size:.78rem}.card .th{float:none;display:block;margin:0 auto 14px}.ticket{padding:12px 28px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
-figure,.memo,.card,.btn,.links a,.brand,#cd,.word i{border:3px solid var(--ink)}
+figure,.memo,.card,.btn,.brand,#cd,.word i{border:3px solid var(--ink)}
 .word i.sp{border:0}
 h2::before,h2::after{content:"";display:inline-block;width:.5em;height:.5em;margin:0 .5em;vertical-align:middle;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 0l2.6 7.4L20 10l-7.4 2.6L10 20l-2.6-7.4L0 10l7.4-2.6z' fill='%23e8694a' stroke='%231c2250' stroke-width='1.5'/%3E%3C/svg%3E") center/contain no-repeat}
 h2::after{transform:rotate(20deg) scale(.7)}
