@@ -1,8 +1,8 @@
 const Config = {
-	title: "YOUR MOD",
+	title: "E.E.T",
 	author: "Plasmablake",
 	tagline: { en: "A Friday Night Funkin' mod", ru: "Мод для Friday Night Funkin'" },
-	links: { Discord: "", YouTube: "", X: "", TikTok: "", GameBanana: "", GitHub: "" },
+	links: { Discord: "https://discord.com/invite/W49Qqpbr88", YouTube: "https://youtube.com/@plasmablake", X: "", TikTok: "", GameBanana: "", GitHub: "" },
 	countdown: { date: "2027-01-01T12:00:00Z", title: { en: "Gameplay Teaser", ru: "Геймплейный тизер" } },
 	repo: "",
 	counterKey: ""
@@ -13,7 +13,7 @@ const T = {
 	ru: { home: "Главная", art: "Фан-арт", progress: "Прогресс", downloads: "Загрузки", d: "Дней", h: "Часов", m: "Минут", s: "Секунд", all: "Весь фан-арт", views: "Посетители", empty: "Пока пусто.", get: "Скачать", soon: "Скоро будет больше.", total: "Всего", join: "Хочешь, чтобы твой арт показали? Отправь его в", lang: "EN", release: "Релиз", beta: "Бета" }
 }
 
-let Lang = localStorage.lang || (navigator.language.startsWith("ru") ? "ru" : "en")
+let Lang = localStorage.lang || "en"
 let Gal = []
 let Idx = 0
 let Seq = 0
@@ -208,6 +208,10 @@ addEventListener("keydown", e => {
 	if (e.key === "ArrowLeft") Show(Idx - 1)
 	if (e.key === "ArrowRight") Show(Idx + 1)
 })
+
+const Bg = new Image()
+Bg.onload = () => document.body.classList.add("bg")
+Bg.src = "backgroundimage.png"
 
 setInterval(Tick, 1000)
 Render()
