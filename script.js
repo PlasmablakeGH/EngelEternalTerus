@@ -1,5 +1,6 @@
 const Config = {
-	title: "Engel's Eternal Terus",
+	title: "YOUR MOD",
+	author: "Plasmablake",
 	tagline: { en: "A Friday Night Funkin' mod", ru: "Мод для Friday Night Funkin'" },
 	links: { Discord: "", YouTube: "", X: "", TikTok: "", GameBanana: "", GitHub: "" },
 	countdown: { date: "2027-01-01T12:00:00Z", title: { en: "Gameplay Teaser", ru: "Геймплейный тизер" } },
@@ -158,7 +159,7 @@ function Shell() {
 		? `<div id="cd"><div><strong>${esc(cd.title[Lang])}</strong><small>${new Date(cd.date).toLocaleString(Lang, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZoneName: "short" })}</small></div>${["d", "h", "m", "s"].map(k => `<div><b>00</b><small>${t(k)}</small></div>`).join("")}</div>`
 		: ""
 	Tick()
-	$("foot").innerHTML = `<div class="ticket"><span>${t("views")}</span><span id="v"></span></div><div class="links">${Object.entries(Config.links).filter(([, u]) => u).map(([k, u]) => `<a href="${Safe(u)}" target="_blank" rel="noopener">${esc(k)}</a>`).join("")}</div><small>© ${new Date().getFullYear()} ${esc(Config.title)}</small>`
+	$("foot").innerHTML = `<div class="ticket"><span>${t("views")}</span><span id="v"></span></div><div class="links">${Object.entries(Config.links).filter(([, u]) => u).map(([k, u]) => `<a href="${Safe(u)}" target="_blank" rel="noopener">${esc(k)}</a>`).join("")}</div><small>© ${new Date().getFullYear()} ${esc(Config.author)}</small>`
 	ViewsP.then(n => { $("v").innerHTML = Digits(n) })
 }
 
