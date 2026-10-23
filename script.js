@@ -149,6 +149,15 @@ function Tick() {
 	document.querySelectorAll("#cd b").forEach((b, i) => b.textContent = String(v[i]).padStart(2, "0"))
 }
 
+function Fallback(img) {
+	if (!img.dataset.t) {
+		img.dataset.t = 1
+		img.src = img.src.replace(/\.png$/, ".svg")
+		return
+	}
+	img.replaceWith(img.alt)
+}
+
 function Shell() {
 	const cd = Config.countdown
 	document.documentElement.lang = Lang
@@ -159,7 +168,7 @@ function Shell() {
 		? `<div id="cd"><div><strong>${esc(cd.title[Lang])}</strong><small>${new Date(cd.date).toLocaleString(Lang, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZoneName: "short" })}</small></div>${["d", "h", "m", "s"].map(k => `<div><b>00</b><small>${t(k)}</small></div>`).join("")}</div>`
 		: ""
 	Tick()
-	$("foot").innerHTML = `<div class="ticket"><span>${t("views")}</span><span id="v"></span></div><div class="links">${Object.entries(Config.links).filter(([, u]) => u).map(([k, u]) => `<a href="${Safe(u)}" target="_blank" rel="noopener">${esc(k)}</a>`).join("")}</div><small>© ${new Date().getFullYear()} ${esc(Config.author)}</small>`
+	$("foot").innerHTML = `<div class="ticket"><span>${t("views")}</span><span id="v"></span></div><div class="links">${Object.entries(Config.links).filter(([, u]) => u).map(([k, u]) => `<a href="${Safe(u)}" target="_blank" rel="noopener" aria-label="${esc(k)}"><img src="icons/${k.toLowerCase().replace(/[^a-z0-9]+/g, "")}.png" alt="${esc(k)}" onerror="Fallback(this)"></a>`).join("")}</div><small>© ${new Date().getFullYear()} ${esc(Config.author)}</small>`
 	ViewsP.then(n => { $("v").innerHTML = Digits(n) })
 }
 
@@ -208,6 +217,10 @@ addEventListener("keydown", e => {
 	if (e.key === "ArrowLeft") Show(Idx - 1)
 	if (e.key === "ArrowRight") Show(Idx + 1)
 })
+
+const Fav = new Image()
+Fav.onload = () => $("fav").href = "favicon.png"
+Fav.src = "favicon.png"
 
 const Bg = new Image()
 Bg.onload = () => document.body.classList.add("bg")
