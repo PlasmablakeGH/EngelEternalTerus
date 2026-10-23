@@ -1,5 +1,5 @@
 const Config = {
-	title: "YOUR MOD",
+	title: "Engel's Eternal Terus",
 	tagline: { en: "A Friday Night Funkin' mod", ru: "Мод для Friday Night Funkin'" },
 	links: { Discord: "", YouTube: "", X: "", TikTok: "", GameBanana: "", GitHub: "" },
 	countdown: { date: "2027-01-01T12:00:00Z", title: { en: "Gameplay Teaser", ru: "Геймплейный тизер" } },
@@ -28,7 +28,7 @@ const Name = p => p.split("/").pop().replace(/\.[^.]+$/, "").replace(/_+/g, " ")
 const byDate = (a, b) => String(b.date || "").localeCompare(String(a.date || ""))
 const Letters = s => [...s].map(c => c === " " ? '<i class="sp"></i>' : `<i>${esc(c)}</i>`).join("")
 const Digits = n => [...n.toLocaleString("en-US")].map(c => c === "," ? "<b>,</b>" : `<span class="d"><em style="--n:${c}">0<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9</em></span>`).join("")
-const Pic = (p, i) => `<figure data-open="${i}"><img src="${encodeURI(p)}" loading="lazy" alt="${esc(Name(p))}"><figcaption>${esc(Name(p))}</figcaption></figure>`
+const Pic = (p, i) => `<figure data-open="${i}"><img src="${encodeURI(p)}" loading="lazy" decoding="async" alt="${esc(Name(p))}"><figcaption>${esc(Name(p))}</figcaption></figure>`
 const Link = k => Config.links[k] ? `<a class="btn alt" href="${Safe(Config.links[k])}" target="_blank" rel="noopener">${k}</a>` : ""
 
 function RepoGuess() {
