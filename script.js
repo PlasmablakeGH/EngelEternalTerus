@@ -1,7 +1,7 @@
 const Config = {
 	title: "E.E.T",
 	author: "Plasmablake",
-	tagline: { en: "A Friday Night Funkin' mod", ru: "Мод для Friday Night Funkin'" },
+	tagline: { en: "A FNF Mod based around FPE, Kaaatieverse", ru: "Мод для FNF основанный на FPE, Kaaatieverse" },
 	links: { Discord: "https://discord.com/invite/W49Qqpbr88", YouTube: "https://youtube.com/@plasmablake", X: "", TikTok: "", GameBanana: "", GitHub: "" },
 	countdown: { date: "2027-01-01T12:00:00Z", title: { en: "Gameplay Teaser", ru: "Геймплейный тизер" } },
 	repo: "",
@@ -101,7 +101,7 @@ async function Home() {
 	const [art, news] = await Promise.all([Imgs(), Json("news")])
 	Gal = art
 	const n = news.sort(byDate).slice(0, 3)
-	return `<section class="sheet"><h1 class="word">${Letters(Config.title)}</h1><p class="tag">${esc(Config.tagline[Lang])}</p><div class="btns"><a class="btn" href="#/downloads">${t("downloads")}</a>${Link("Discord")}</div></section>`
+	return `<section class="sheet hero"><h1 class="word">${Letters(Config.title)}</h1><p class="tag">${esc(Config.tagline[Lang])}</p><div class="btns"><a class="btn" href="#/downloads">${t("downloads")}</a>${Link("Discord")}</div></section>`
 		+ (n.length ? `<section class="notes">${n.map((x, i) => `<article class="memo m${i}"><time>${esc(x.date || "")}</time><h3>${esc(pick(x, "title"))}</h3><p>${esc(pick(x, "text"))}</p></article>`).join("")}</section>` : "")
 		+ (art.length ? `<section class="sheet"><h2>${t("art")}</h2><div class="line">${art.slice(0, 8).map(Pic).join("")}</div><a class="btn" href="#/fan-art">${t("all")}</a></section>` : "")
 }
@@ -119,7 +119,9 @@ async function ProgressPage() {
 	const rows = items.map(p => {
 		const v = Math.min(100, Math.max(0, +p.percent || 0))
 		const note = pick(p, "note")
-		return `<div class="row"><h3>${esc(pick(p, "title"))}</h3><span class="pc">${v}%</span><div class="ruler"><i class="fill" style="--p:${v}%"></i></div>${note ? `<p>${esc(note)}</p>` : ""}</div>`
+		const title = esc(pick(p, "title"))
+		const who = p.logo ? `<img${p.invert ? ' class="inv"' : ""} src="${Safe(p.logo)}" alt="${title}">` : `<h3>${title}</h3>`
+		return `<div class="row${p.logo ? " logo" : ""}"><div class="who">${who}</div><span class="pc">${v}%</span><div class="ecg"><i class="beat" style="--p:${v}%;--t:${(1.1 + (100 - v) / 100 * 2.6).toFixed(2)}s"></i></div>${note ? `<p>${esc(note)}</p>` : ""}</div>`
 	}).join("")
 	return `<section class="sheet"><h2>${t("progress")}</h2>${items.length ? `<span class="stamp big">${t("total")} ${avg}%</span>${rows}` : `<p>${t("empty")}</p>`}</section>`
 }
