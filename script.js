@@ -5,13 +5,12 @@ const Config = {
 	links: { Discord: "https://discord.com/invite/W49Qqpbr88", YouTube: "https://youtube.com/@plasmablake", X: "", TikTok: "", GameBanana: "", GitHub: "" },
 	countdown: { date: "2027-01-01T12:00:00Z", title: { en: "Gameplay Teaser", ru: "Геймплейный тизер" } },
 	repo: "",
-	email: "plasmablake@example.com",
 	counterKey: ""
 }
 
 const T = {
-	en: { home: "Home", art: "Fan-Art", progress: "Progress", downloads: "Downloads", d: "Days", h: "Hours", m: "Minutes", s: "Seconds", all: "View all fan-art", views: "Visitors", empty: "Nothing here yet.", get: "Download", soon: "More coming soon.", total: "Overall", join: "Want your art featured? Send it on", lang: "RU", release: "Release", beta: "Beta", contact: "Contact", cdesc: "Questions, bugs, collabs - write to me. This opens your mail app.", yname: "Your name", topic: "Topic", topics: ["Question", "Fan-art", "Bug report", "Collab"], msg: "Message", send: "Open in mail app", copy: "Copy address", copied: "Copied", since: "Compared to your visit on", new: "New" },
-	ru: { home: "Главная", art: "Фан-арт", progress: "Прогресс", downloads: "Загрузки", d: "Дней", h: "Часов", m: "Минут", s: "Секунд", all: "Весь фан-арт", views: "Посетители", empty: "Пока пусто.", get: "Скачать", soon: "Скоро будет больше.", total: "Всего", join: "Хочешь, чтобы твой арт показали? Отправь его в", lang: "EN", release: "Релиз", beta: "Бета", contact: "Контакты", cdesc: "Вопросы, баги, сотрудничество - пиши мне. Откроется твоё почтовое приложение.", yname: "Твоё имя", topic: "Тема", topics: ["Вопрос", "Фан-арт", "Баг", "Сотрудничество"], msg: "Сообщение", send: "Открыть в почте", copy: "Копировать адрес", copied: "Скопировано", since: "По сравнению с визитом", new: "Новое" }
+	en: { home: "Home", art: "Fan-Art", progress: "Progress", downloads: "Downloads", d: "Days", h: "Hours", m: "Minutes", s: "Seconds", all: "View all fan-art", views: "Visitors", empty: "Nothing here yet.", get: "Download", soon: "More coming soon.", total: "Overall", join: "Want your art featured? Send it on", lang: "RU", release: "Release", beta: "Beta", since: "Compared to your visit on", new: "New" },
+	ru: { home: "Главная", art: "Фан-арт", progress: "Прогресс", downloads: "Загрузки", d: "Дней", h: "Часов", m: "Минут", s: "Секунд", all: "Весь фан-арт", views: "Посетители", empty: "Пока пусто.", get: "Скачать", soon: "Скоро будет больше.", total: "Всего", join: "Хочешь, чтобы твой арт показали? Отправь его в", lang: "EN", release: "Релиз", beta: "Бета", since: "По сравнению с визитом", new: "Новое" }
 }
 
 let Lang = localStorage.lang || "en"
@@ -152,13 +151,7 @@ async function DownloadsPage() {
 	return `<section class="sheet"><h2>${t("downloads")}</h2>${cards ? `<div class="cards">${cards}</div>` : `<p>${t("empty")}</p>`}<p class="soon">${t("soon")}</p></section>`
 }
 
-function ContactPage() {
-	const mail = esc(Config.email)
-	const topics = T[Lang].topics.map(x => `<option>${esc(x)}</option>`).join("")
-	return `<section class="sheet"><h2>${t("contact")}</h2><p class="hint">${t("cdesc")}</p><form id="mail" class="mail"><label>${t("yname")}<input name="n" maxlength="60" autocomplete="name"></label><label>${t("topic")}<select name="s">${topics}</select></label><label>${t("msg")}<textarea name="m" rows="6" required></textarea></label><button class="btn" type="submit">${t("send")}</button></form><p class="addr"><b>${mail}</b><button id="copy" class="btn alt" type="button">${t("copy")}</button></p></section>`
-}
-
-const Pages = { "": Home, "fan-art": ArtPage, progress: ProgressPage, downloads: DownloadsPage, contact: ContactPage }
+const Pages = { "": Home, "fan-art": ArtPage, progress: ProgressPage, downloads: DownloadsPage }
 
 const Key = () => {
 	const k = location.hash.replace(/^#\/?/, "")
@@ -187,7 +180,7 @@ function Shell() {
 	document.documentElement.lang = Lang
 	document.title = Config.title
 	$("brand").textContent = Config.title
-	$("nav").innerHTML = [["", "home"], ["fan-art", "art"], ["progress", "progress"], ["downloads", "downloads"], ["contact", "contact"]].map(([h, k]) => `<a href="#/${h}" class="${h === Key() ? "on" : ""}">${t(k)}</a>`).join("") + `<button id="lang">${t("lang")}</button>`
+	$("nav").innerHTML = [["", "home"], ["fan-art", "art"], ["progress", "progress"], ["downloads", "downloads"]].map(([h, k]) => `<a href="#/${h}" class="${h === Key() ? "on" : ""}">${t(k)}</a>`).join("") + `<button id="lang">${t("lang")}</button>`
 	$("cdw").innerHTML = cd && new Date(cd.date) > Date.now()
 		? `<div id="cd"><div><strong>${esc(cd.title[Lang])}</strong><small>${new Date(cd.date).toLocaleString(Lang, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZoneName: "short" })}</small></div>${["d", "h", "m", "s"].map(k => `<div><b>00</b><small>${t(k)}</small></div>`).join("")}</div>`
 		: ""
@@ -222,21 +215,7 @@ addEventListener("hashchange", () => {
 	scrollTo(0, 0)
 })
 
-document.addEventListener("submit", e => {
-	if (e.target.id !== "mail") return
-	e.preventDefault()
-	const f = e.target.elements
-	const body = f.m.value + (f.n.value ? "\n\n- " + f.n.value : "")
-	location.href = `mailto:${Config.email}?subject=${encodeURIComponent("[" + Config.title + "] " + f.s.value)}&body=${encodeURIComponent(body)}`
-})
-
 document.addEventListener("click", e => {
-	if (e.target.closest("#copy")) {
-		const b = $("copy")
-		navigator.clipboard?.writeText(Config.email)
-		b.textContent = t("copied")
-		return setTimeout(() => b.textContent = t("copy"), 1500)
-	}
 	const f = e.target.closest("[data-open]")
 	if (f) return Show(+f.dataset.open)
 	if (e.target.closest("#lang")) {
@@ -263,6 +242,12 @@ Fav.src = "favicon.png"
 const Bg = new Image()
 Bg.onload = () => document.body.classList.add("bg")
 Bg.src = "backgroundimage.png"
+
+addEventListener("pointermove", e => {
+	const r = document.documentElement.style
+	r.setProperty("--mx", e.clientX + "px")
+	r.setProperty("--my", e.clientY + "px")
+})
 
 setInterval(Tick, 1000)
 Render()
