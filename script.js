@@ -180,7 +180,7 @@ function Shell() {
 	document.documentElement.lang = Lang
 	document.title = Config.title
 	$("brand").textContent = Config.title
-	$("nav").innerHTML = [["", "home"], ["fan-art", "art"], ["progress", "progress"], ["downloads", "downloads"]].map(([h, k]) => `<a href="#/${h}" class="${h === Key() ? "on" : ""}">${t(k)}</a>`).join("") + `<button id="lang">${t("lang")}</button>`
+	$("nav").innerHTML = [["", "home", "home"], ["fan-art", "art", "fanart"], ["progress", "progress", "progress"], ["downloads", "downloads", "download"]].map(([h, k, i]) => `<a href="#/${h}" class="${h === Key() ? "on" : ""}"><img src="icons/nav/${i}.png" alt=""><span>${t(k)}</span></a>`).join("") + `<button id="lang">${t("lang")}</button>`
 	$("cdw").innerHTML = cd && new Date(cd.date) > Date.now()
 		? `<div id="cd"><div><strong>${esc(cd.title[Lang])}</strong><small>${new Date(cd.date).toLocaleString(Lang, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZoneName: "short" })}</small></div>${["d", "h", "m", "s"].map(k => `<div><b>00</b><small>${t(k)}</small></div>`).join("")}</div>`
 		: ""
