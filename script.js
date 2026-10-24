@@ -3,7 +3,7 @@ const Config = {
 	author: "Plasmablake",
 	tagline: { en: "A FNF Mod based around FPE, Kaaatieverse", ru: "Мод для FNF основанный на FPE, Kaaatieverse" },
 	links: { Discord: "https://discord.com/invite/W49Qqpbr88", YouTube: "https://youtube.com/@plasmablake", X: "", TikTok: "", GameBanana: "", GitHub: "" },
-	countdown: { date: "2027-01-01T12:00:00Z", title: { en: "Gameplay Teaser", ru: "Геймплейный тизер" } },
+	countdown: { date: "2027-01-01T12:00:00Z", title: { en: "Vengeance song Teaser", ru: "Vengeance музыкальный тизер" } },
 	repo: "",
 	counterKey: ""
 }
