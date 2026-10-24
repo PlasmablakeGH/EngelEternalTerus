@@ -5,12 +5,13 @@ const Config = {
 	links: { Discord: "https://discord.com/invite/W49Qqpbr88", YouTube: "https://youtube.com/@plasmablake", X: "", TikTok: "", GameBanana: "", GitHub: "" },
 	countdown: { date: "2027-01-01T12:00:00Z", title: { en: "Gameplay Teaser", ru: "Геймплейный тизер" } },
 	repo: "",
+	email: "plasmablake@example.com",
 	counterKey: ""
 }
 
 const T = {
-	en: { home: "Home", art: "Fan-Art", progress: "Progress", downloads: "Downloads", d: "Days", h: "Hours", m: "Minutes", s: "Seconds", all: "View all fan-art", views: "Visitors", empty: "Nothing here yet.", get: "Download", soon: "More coming soon.", total: "Overall", join: "Want your art featured? Send it on", lang: "RU", release: "Release", beta: "Beta" },
-	ru: { home: "Главная", art: "Фан-арт", progress: "Прогресс", downloads: "Загрузки", d: "Дней", h: "Часов", m: "Минут", s: "Секунд", all: "Весь фан-арт", views: "Посетители", empty: "Пока пусто.", get: "Скачать", soon: "Скоро будет больше.", total: "Всего", join: "Хочешь, чтобы твой арт показали? Отправь его в", lang: "EN", release: "Релиз", beta: "Бета" }
+	en: { home: "Home", art: "Fan-Art", progress: "Progress", downloads: "Downloads", d: "Days", h: "Hours", m: "Minutes", s: "Seconds", all: "View all fan-art", views: "Visitors", empty: "Nothing here yet.", get: "Download", soon: "More coming soon.", total: "Overall", join: "Want your art featured? Send it on", lang: "RU", release: "Release", beta: "Beta", contact: "Contact", cdesc: "Questions, bugs, collabs - write to me. This opens your mail app.", yname: "Your name", topic: "Topic", topics: ["Question", "Fan-art", "Bug report", "Collab"], msg: "Message", send: "Open in mail app", copy: "Copy address", copied: "Copied", since: "Compared to your visit on", new: "New" },
+	ru: { home: "Главная", art: "Фан-арт", progress: "Прогресс", downloads: "Загрузки", d: "Дней", h: "Часов", m: "Минут", s: "Секунд", all: "Весь фан-арт", views: "Посетители", empty: "Пока пусто.", get: "Скачать", soon: "Скоро будет больше.", total: "Всего", join: "Хочешь, чтобы твой арт показали? Отправь его в", lang: "EN", release: "Релиз", beta: "Бета", contact: "Контакты", cdesc: "Вопросы, баги, сотрудничество - пиши мне. Откроется твоё почтовое приложение.", yname: "Твоё имя", topic: "Тема", topics: ["Вопрос", "Фан-арт", "Баг", "Сотрудничество"], msg: "Сообщение", send: "Открыть в почте", copy: "Копировать адрес", copied: "Скопировано", since: "По сравнению с визитом", new: "Новое" }
 }
 
 let Lang = localStorage.lang || "en"
@@ -18,6 +19,15 @@ let Gal = []
 let Idx = 0
 let Seq = 0
 const Cache = {}
+let Seen = null
+try { Seen = JSON.parse(localStorage.seen || "null") } catch { }
+const Mark = (kind, items) => {
+	let s = {}
+	try { s = JSON.parse(localStorage.seen || "{}") } catch { }
+	s[kind] = items
+	s.t = Date.now()
+	localStorage.seen = JSON.stringify(s)
+}
 const $ = i => document.getElementById(i)
 const app = $("app")
 const box = $("box")
@@ -101,8 +111,10 @@ async function Home() {
 	const [art, news] = await Promise.all([Imgs(), Json("news")])
 	Gal = art
 	const n = news.sort(byDate).slice(0, 3)
+	const fresh = x => Seen && Seen.news && !Seen.news.includes(x.title)
+	Mark("news", news.map(x => x.title))
 	return `<section class="sheet hero"><h1 class="word">${Letters(Config.title)}</h1><p class="tag">${esc(Config.tagline[Lang])}</p><div class="btns"><a class="btn" href="#/downloads">${t("downloads")}</a>${Link("Discord")}</div></section>`
-		+ (n.length ? `<section class="notes">${n.map((x, i) => `<article class="memo m${i}"><time>${esc(x.date || "")}</time><h3>${esc(pick(x, "title"))}</h3><p>${esc(pick(x, "text"))}</p></article>`).join("")}</section>` : "")
+		+ (n.length ? `<section class="notes">${n.map((x, i) => `<article class="memo m${i}">${fresh(x) ? `<span class="stamp">${t("new")}</span>` : ""}<time>${esc(x.date || "")}</time><h3>${esc(pick(x, "title"))}</h3><p>${esc(pick(x, "text"))}</p></article>`).join("")}</section>` : "")
 		+ (art.length ? `<section class="sheet"><h2>${t("art")}</h2><div class="line">${art.slice(0, 8).map(Pic).join("")}</div><a class="btn" href="#/fan-art">${t("all")}</a></section>` : "")
 }
 
@@ -116,14 +128,18 @@ async function ArtPage() {
 async function ProgressPage() {
 	const items = (await Json("progress")).sort((a, b) => (a.order ?? 99) - (b.order ?? 99))
 	const avg = items.length ? Math.round(items.reduce((s, p) => s + (+p.percent || 0), 0) / items.length) : 0
+	const old = Seen && Seen.progress
+	Mark("progress", Object.fromEntries(items.map(p => [p.title, +p.percent || 0])))
 	const rows = items.map(p => {
 		const v = Math.min(100, Math.max(0, +p.percent || 0))
+		const was = old ? old[p.title] : undefined
+		const up = !old ? "" : was === undefined ? `<small class="up fresh">${t("new")}</small>` : v !== Math.round(was) ? `<small class="up">${v > was ? "▲ +" : "▼ "}${Math.round(v - was)}%</small>` : ""
 		const note = pick(p, "note")
 		const title = esc(pick(p, "title"))
 		const who = p.logo ? `<img${p.invert ? ' class="inv"' : ""} src="${Safe(p.logo)}" alt="${title}">` : `<h3>${title}</h3>`
-		return `<div class="row${p.logo ? " logo" : ""}"><div class="who">${who}</div><span class="pc">${v}%</span><div class="ecg"><i class="beat" style="--p:${v}%;--t:${(1.1 + (100 - v) / 100 * 2.6).toFixed(2)}s"></i></div>${note ? `<p>${esc(note)}</p>` : ""}</div>`
+		return `<div class="row${p.logo ? " logo" : ""}"><div class="who">${who}</div><span class="pc">${v}%${up}</span><div class="ecg"><i class="beat" style="--p:${v}%;--t:${(1.1 + (100 - v) / 100 * 2.6).toFixed(2)}s"></i></div>${note ? `<p>${esc(note)}</p>` : ""}</div>`
 	}).join("")
-	return `<section class="sheet"><h2>${t("progress")}</h2>${items.length ? `<span class="stamp big">${t("total")} ${avg}%</span>${rows}` : `<p>${t("empty")}</p>`}</section>`
+	return `<section class="sheet"><h2>${t("progress")}</h2>${items.length ? `<span class="stamp big">${t("total")} ${avg}%</span>${old && Seen.t ? `<p class="since">${t("since")} ${new Date(Seen.t).toLocaleDateString(Lang, { day: "numeric", month: "short" })}</p>` : ""}${rows}` : `<p>${t("empty")}</p>`}</section>`
 }
 
 async function DownloadsPage() {
@@ -136,7 +152,13 @@ async function DownloadsPage() {
 	return `<section class="sheet"><h2>${t("downloads")}</h2>${cards ? `<div class="cards">${cards}</div>` : `<p>${t("empty")}</p>`}<p class="soon">${t("soon")}</p></section>`
 }
 
-const Pages = { "": Home, "fan-art": ArtPage, progress: ProgressPage, downloads: DownloadsPage }
+function ContactPage() {
+	const mail = esc(Config.email)
+	const topics = T[Lang].topics.map(x => `<option>${esc(x)}</option>`).join("")
+	return `<section class="sheet"><h2>${t("contact")}</h2><p class="hint">${t("cdesc")}</p><form id="mail" class="mail"><label>${t("yname")}<input name="n" maxlength="60" autocomplete="name"></label><label>${t("topic")}<select name="s">${topics}</select></label><label>${t("msg")}<textarea name="m" rows="6" required></textarea></label><button class="btn" type="submit">${t("send")}</button></form><p class="addr"><b>${mail}</b><button id="copy" class="btn alt" type="button">${t("copy")}</button></p></section>`
+}
+
+const Pages = { "": Home, "fan-art": ArtPage, progress: ProgressPage, downloads: DownloadsPage, contact: ContactPage }
 
 const Key = () => {
 	const k = location.hash.replace(/^#\/?/, "")
@@ -165,7 +187,7 @@ function Shell() {
 	document.documentElement.lang = Lang
 	document.title = Config.title
 	$("brand").textContent = Config.title
-	$("nav").innerHTML = [["", "home"], ["fan-art", "art"], ["progress", "progress"], ["downloads", "downloads"]].map(([h, k]) => `<a href="#/${h}" class="${h === Key() ? "on" : ""}">${t(k)}</a>`).join("") + `<button id="lang">${t("lang")}</button>`
+	$("nav").innerHTML = [["", "home"], ["fan-art", "art"], ["progress", "progress"], ["downloads", "downloads"], ["contact", "contact"]].map(([h, k]) => `<a href="#/${h}" class="${h === Key() ? "on" : ""}">${t(k)}</a>`).join("") + `<button id="lang">${t("lang")}</button>`
 	$("cdw").innerHTML = cd && new Date(cd.date) > Date.now()
 		? `<div id="cd"><div><strong>${esc(cd.title[Lang])}</strong><small>${new Date(cd.date).toLocaleString(Lang, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZoneName: "short" })}</small></div>${["d", "h", "m", "s"].map(k => `<div><b>00</b><small>${t(k)}</small></div>`).join("")}</div>`
 		: ""
@@ -200,7 +222,21 @@ addEventListener("hashchange", () => {
 	scrollTo(0, 0)
 })
 
+document.addEventListener("submit", e => {
+	if (e.target.id !== "mail") return
+	e.preventDefault()
+	const f = e.target.elements
+	const body = f.m.value + (f.n.value ? "\n\n- " + f.n.value : "")
+	location.href = `mailto:${Config.email}?subject=${encodeURIComponent("[" + Config.title + "] " + f.s.value)}&body=${encodeURIComponent(body)}`
+})
+
 document.addEventListener("click", e => {
+	if (e.target.closest("#copy")) {
+		const b = $("copy")
+		navigator.clipboard?.writeText(Config.email)
+		b.textContent = t("copied")
+		return setTimeout(() => b.textContent = t("copy"), 1500)
+	}
 	const f = e.target.closest("[data-open]")
 	if (f) return Show(+f.dataset.open)
 	if (e.target.closest("#lang")) {
